@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Scheduler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 5px;
+            max-width: 100%;
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        .day {
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 60px;
+            cursor: pointer;
+            position: relative;
+            background: #f9f9f9;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .day:active {
+            background-color: #ddd;
+        }
+
+        .event {
+            color: white;
+            padding: 3px;
+            margin-top: 3px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        /* Các lớp CSS cho mỗi thời gian */
+        .event.morning {
+            background-color: #4CAF50;
+        }
+
+        .event.afternoon {
+            background-color: #ff9800;
+        }
+
+        .event.evening {
+            background-color: #3f51b5;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .popup button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .popup input {
+            width: calc(100% - 10px);
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #btnSáng.selected {
+            background-color: #ffeb3b;
+        }
+
+        #btnChiều.selected {
+            background-color: #ff9800;
+        }
+
+        #btnTối.selected {
+            background-color: #3f51b5;
+        }
+
+        .time-btn {
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+        }
+
+        .selected {
+            background-color: #00b9b7;
+        }
+    </style>
+</head>
+<body>
+<h1>Monthly Calendar</h1>
+<div class="calendar" id="calendar"></div>
+<div id="popup" class="popup">
+    <h3>Chọn thời gian</h3>
+    <button onclick="selectTime('Sáng')" id="btnSáng" class="time-btn">Sáng</button>
+    <button onclick="selectTime('Chiều')" id="btnChiều" class="time-btn">Chiều</button>
+    <button onclick="selectTime('Tối')" id="btnTối" class="time-btn">Tối</button>
+    <input type="text" id="eventDetail" placeholder="Nhập nội dung sự kiện">
+    <button onclick="saveEvent()">Lưu</button>
+    <button onclick="closePopup()">Hủy</button>
+</div>
+<script>
+    const calendar = document.getElementById("calendar");
+    const popup = document.getElementById("popup");
+    const eventDetailInput = document.getElementById("eventDetail");
+    let selectedDay = null;
+    let selectedTimeSlot = null;
+    const daysInMonth = getDaysInMonth();
+    const timeSlots = ["Sáng", "Chiều", "Tối"];
+
+    function getDaysInMonth() {
+        const date = new Date();
+        const month = date.getMonth();
+        const year = date.getFullYear();
+        return new Date(year, month + 1, 0).getDate();
+    }
+
+    function loadCalendar() {
+        calendar.innerHTML = "";
+        for (let i = 1; i <= daysInMonth; i++) {
+            let dayDiv = document.createElement("div");
+            dayDiv.className = "day";
+            dayDiv.dataset.date = i;
+            dayDiv.innerHTML = `<strong>${i}</strong>`;
+            let savedEvents = JSON.parse(localStorage.getItem("events-" + i)) || [];
+            savedEvents.forEach(event => {
+                let eventDiv = document.createElement("div");
+                eventDiv.className = "event " + event.time.toLowerCase(); // Thêm class tương ứng với thời gian
+                eventDiv.innerText = `${event.time}: ${event.detail}`;
+                eventDiv.onclick = (e) => editEvent(i, event.time);
+                dayDiv.appendChild(eventDiv);
+            });
+            dayDiv.onclick = () => openPopup(i);
+            calendar.appendChild(dayDiv);
+        }
+    }
+
+    function openPopup(day) {
+        selectedDay = day;
+        selectedTimeSlot = null;
+        eventDetailInput.value = "";
+        popup.style.display = "block";
+    }
+
+    function selectTime(time) {
+        selectedTimeSlot = time;
+        const buttons = document.querySelectorAll(".time-btn");
+        buttons.forEach(button => {
+            button.classList.remove("selected");
+        });
+        const selectedButton = document.getElementById("btn" + time);
+        selectedButton.classList.add("selected");
+    }
+
+    function saveEvent() {
+        if (!selectedTimeSlot) {
+            alert("Vui lòng chọn thời gian.");
+            return;
+        }
+        let eventDetail = eventDetailInput.value.trim();
+        if (!eventDetail) {
+            alert("Vui lòng nhập nội dung sự kiện.");
+            return;
+        }
+        let savedEvents = JSON.parse(localStorage.getItem("events-" + selectedDay)) || [];
+        let existingEvent = savedEvents.find(event => event.time === selectedTimeSlot);
+        if (existingEvent) {
+            existingEvent.detail = eventDetail;
+        } else {
+            if (savedEvents.length >= 3) {
+                alert("Chỉ có thể thêm tối đa 3 sự kiện mỗi ngày.");
+                return;
+            }
+            savedEvents.push({time: selectedTimeSlot, detail: eventDetail});
+        }
+        localStorage.setItem("events-" + selectedDay, JSON.stringify(savedEvents));
+        closePopup();
+        loadCalendar();
+    }
+
+    function editEvent(day, time) {
+        let savedEvents = JSON.parse(localStorage.getItem("events-" + day)) || [];
+        let event = savedEvents.find(e => e.time === time);
+        if (event) {
+            selectedDay = day;
+            selectedTimeSlot = time;
+            eventDetailInput.value = event.detail;
+            popup.style.display = "block";
+        }
+    }
+
+    function closePopup() {
+        const buttons = document.querySelectorAll(".time-btn");
+        buttons.forEach(button => {
+            button.classList.remove("selected");
+        });
+        popup.style.display = "none";
+    }
+
+    loadCalendar();
+</script>
+</body>
+</html>

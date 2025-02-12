@@ -44,19 +44,6 @@
             font-size: 12px;
         }
 
-        /* Các lớp CSS cho mỗi thời gian */
-        .event.morning {
-            background-color: #4CAF50;
-        }
-
-        .event.afternoon {
-            background-color: #ff9800;
-        }
-
-        .event.evening {
-            background-color: #3f51b5;
-        }
-
         .popup {
             display: none;
             position: fixed;
@@ -89,16 +76,16 @@
             border-radius: 5px;
         }
 
-        #btnSáng.selected {
-            background-color: #ffeb3b;
+        #btnSáng.selected, .sáng {
+            background-color: #24abab;
         }
 
-        #btnChiều.selected {
+        #btnChiều.selected, .chiều {
             background-color: #ff9800;
         }
 
-        #btnTối.selected {
-            background-color: #3f51b5;
+        #btnTối.selected, .tối {
+            background-color: #2a3a93;
         }
 
         .time-btn {
@@ -111,15 +98,15 @@
         }
     </style>
 </head>
-<body>
-<h1>Monthly Calendar</h1>
+<body onload="getMonth()">
+<h1 id="monthDisplay"></h1>
 <div class="calendar" id="calendar"></div>
 <div id="popup" class="popup">
     <h3>Chọn thời gian</h3>
     <button onclick="selectTime('Sáng')" id="btnSáng" class="time-btn">Sáng</button>
     <button onclick="selectTime('Chiều')" id="btnChiều" class="time-btn">Chiều</button>
     <button onclick="selectTime('Tối')" id="btnTối" class="time-btn">Tối</button>
-    <input type="text" id="eventDetail" placeholder="Nhập nội dung sự kiện">
+    <input type="text" id="eventDetail" placeholder="Nhập nội dung">
     <button onclick="saveEvent()">Lưu</button>
     <button onclick="closePopup()">Hủy</button>
 </div>
@@ -139,7 +126,14 @@
         return new Date(year, month + 1, 0).getDate();
     }
 
+    function getMonth() {
+        const now = new Date();
+        const month = now.getMonth() + 1;
+        document.getElementById("monthDisplay").innerHTML = "Lịch tháng " + month;
+    }
+
     function loadCalendar() {
+
         calendar.innerHTML = "";
         for (let i = 1; i <= daysInMonth; i++) {
             let dayDiv = document.createElement("div");
@@ -149,7 +143,7 @@
             let savedEvents = JSON.parse(localStorage.getItem("events-" + i)) || [];
             savedEvents.forEach(event => {
                 let eventDiv = document.createElement("div");
-                eventDiv.className = "event " + event.time.toLowerCase(); // Thêm class tương ứng với thời gian
+                eventDiv.className = "event " + event.time.toLowerCase();
                 eventDiv.innerText = `${event.time}: ${event.detail}`;
                 eventDiv.onclick = (e) => editEvent(i, event.time);
                 dayDiv.appendChild(eventDiv);
@@ -183,7 +177,7 @@
         }
         let eventDetail = eventDetailInput.value.trim();
         if (!eventDetail) {
-            alert("Vui lòng nhập nội dung sự kiện.");
+            alert("Vui lòng nhập nội dung.");
             return;
         }
         let savedEvents = JSON.parse(localStorage.getItem("events-" + selectedDay)) || [];

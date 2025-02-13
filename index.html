@@ -133,14 +133,19 @@
     }
 
     function loadCalendar() {
-
         calendar.innerHTML = "";
         for (let i = 1; i <= daysInMonth; i++) {
             let dayDiv = document.createElement("div");
             dayDiv.className = "day";
             dayDiv.dataset.date = i;
             dayDiv.innerHTML = `<strong>${i}</strong>`;
+
             let savedEvents = JSON.parse(localStorage.getItem("events-" + i)) || [];
+
+            // Sắp xếp sự kiện theo thứ tự Sáng -> Chiều -> Tối
+            const timeOrder = { "Sáng": 1, "Chiều": 2, "Tối": 3 };
+            savedEvents.sort((a, b) => timeOrder[a.time] - timeOrder[b.time]);
+
             savedEvents.forEach(event => {
                 let eventDiv = document.createElement("div");
                 eventDiv.className = "event " + event.time.toLowerCase();
@@ -148,12 +153,21 @@
                 eventDiv.onclick = (e) => editEvent(i, event.time);
                 dayDiv.appendChild(eventDiv);
             });
+
             dayDiv.onclick = () => openPopup(i);
             calendar.appendChild(dayDiv);
         }
     }
 
+
     function openPopup(day) {
+        const today = new Date().getDate(); // Lấy ngày hiện tại
+
+        if (day < today) {
+            alert("Bạn không thể thêm sự kiện cho ngày đã qua.");
+            return;
+        }
+
         selectedDay = day;
         selectedTimeSlot = null;
         eventDetailInput.value = "";

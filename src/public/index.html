@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sự Kiện</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Lịch Sự Kiện</h1>
+
+<div class="calendar-container">
+    <label for="month">Chọn tháng:</label>
+    <select id="month"></select>
+
+    <label for="year">Chọn năm:</label>
+    <select id="year"></select>
+
+    <button onclick="loadEvents()">Xem sự kiện</button>
+</div>
+
+<table id="calendar">
+    <thead>
+    <tr>
+        <th>Ngày</th>
+        <th>Buổi</th>
+        <th>Chi Tiết</th>
+        <th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<div class="form-container">
+    <h2>Thêm sự kiện mới</h2>
+    <label>Ngày:</label>
+    <input type="number" id="day" min="1" max="31">
+
+    <label>Buổi:</label>
+    <select id="timeSlot">
+        <option value="Sáng">Sáng</option>
+        <option value="Chiều">Chiều</option>
+        <option value="Tối">Tối</option>
+    </select>
+
+    <label>Chi tiết:</label>
+    <input type="text" id="detail">
+
+    <button onclick="addEvent()">Thêm Sự Kiện</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

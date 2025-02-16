@@ -6,7 +6,7 @@ use App\Http\Requests\SaveEventRequest;
 use App\Services\Interfaces\IEventService;
 use App\Transformers\EventListTransformer;
 use Illuminate\Http\JsonResponse;
-use League\Fractal\Pagination\IlluminatePaginatorAdapter;
+use Illuminate\Http\Request;
 use Spatie\Fractalistic\ArraySerializer;
 
 class EventController extends Controller
@@ -36,7 +36,6 @@ class EventController extends Controller
                 'data' => fractal()->collection($data)
                     ->transformWith(new EventListTransformer())
                     ->serializeWith(new ArraySerializer())
-                    ->paginateWith(new IlluminatePaginatorAdapter($data))
             ]);
         });
     }
@@ -46,7 +45,7 @@ class EventController extends Controller
      * @param SaveEventRequest $request
      * @return JsonResponse
      */
-    public function save($id, SaveEventRequest $request): JsonResponse
+    public function save(SaveEventRequest $request): JsonResponse
     {
         return $this->withErrorHandling(function () use ($id, $request) {
             $data = $this->eventService->save($id, $request);
@@ -59,13 +58,13 @@ class EventController extends Controller
     }
 
     /**
-     * @param $id
+     * @param Request $request
      * @return JsonResponse
      */
-    public function delete($id): JsonResponse
+    public function delete(Request $request): JsonResponse
     {
-        return $this->withErrorHandling(function () use ($id) {
-            $data = $this->eventService->delete($id);
+        return $this->withErrorHandling(function () use ($request) {
+            $data = $this->eventService->delete($request);
 
             return optional($data) ?
                 $this->message(__('Xóa lịch thành công!'))->respondOk() :

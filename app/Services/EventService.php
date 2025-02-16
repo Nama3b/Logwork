@@ -2,22 +2,29 @@
 
 namespace App\Services;
 
+use App\Models\Event;
 use App\Services\Interfaces\IEventService;
+use Carbon\Carbon;
 
 class EventService implements IEventService
 {
     public function list()
     {
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
 
+        return Event::where('month', $currentMonth)->where('year', $currentYear)->get();
     }
 
     public function save($id, $request)
     {
-        dd($request);
+
     }
 
-    public function delete($id)
+    public function delete($request)
     {
-        // TODO: Implement create() method.
+        $query = Event::where('id', $request->id)->first();
+
+
     }
 }

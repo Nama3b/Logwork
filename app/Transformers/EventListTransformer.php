@@ -33,6 +33,7 @@ class EventListTransformer extends TransformerAbstract
     public function transform($data): array
     {
         return [
+            'id' => $data->id,
             'day' => $data->day,
             'month' => $data->month,
             'year' => $data->year,

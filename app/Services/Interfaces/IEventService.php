@@ -8,5 +8,5 @@ interface IEventService
 
     public function save($id, $request);
 
-    public function delete($id);
+    public function delete($request);
 }

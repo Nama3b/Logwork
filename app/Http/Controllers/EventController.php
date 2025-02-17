@@ -41,14 +41,13 @@ class EventController extends Controller
     }
 
     /**
-     * @param $id
      * @param SaveEventRequest $request
      * @return JsonResponse
      */
     public function save(SaveEventRequest $request): JsonResponse
     {
-        return $this->withErrorHandling(function () use ($id, $request) {
-            $data = $this->eventService->save($id, $request);
+        return $this->withErrorHandling(function () use ($request) {
+            $data = $this->eventService->save($request);
 
             return optional($data) ?
                 $this->message(__('Lưu lịch thành công!'))->respondCreated() :

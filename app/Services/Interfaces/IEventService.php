@@ -6,7 +6,7 @@ interface IEventService
 {
     public function list();
 
-    public function save($id, $request);
+    public function save($request);
 
     public function delete($request);
 }

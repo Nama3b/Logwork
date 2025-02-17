@@ -77,7 +77,8 @@ h1 {
 }
 
 .selected {
-    background-color: #00b9b7;
+    color: white;
+    background-color: #505151;
 }
 
 #btnSáng.selected, .sáng {
@@ -106,6 +107,7 @@ button.delete-btn {
     top: -3px;
     border-radius: 50%;
     color: white;
+    cursor: pointer;
 }
 
 .btn-action {
@@ -134,8 +136,8 @@ button.delete-btn {
             <div v-for="day in daysInMonth" :key="day" class="day" @click="openPopup(day)">
                 {{ day }}
                 <div v-for="(event, time) in events[day]" :key="time" :class="['event', time.toLowerCase()]">
-                    {{ time }}: {{ event }}
-                    <button class="delete-btn" @click.stop="deleteEvent(day, time)">&times;</button>
+                    {{ time }}: {{ event.detail }}
+                    <button class="delete-btn" @click.stop="deleteEvent(event.id)">&times;</button>
                 </div>
             </div>
         </div>
@@ -233,9 +235,11 @@ export default {
             }
         };
 
-        const deleteEvent = async (day, time) => {
-            const eventId = events.value[day]?.[time]?.id;
-            if (!eventId) return;
+        const deleteEvent = async () => {
+            const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?");
+            if (!confirmDelete) return;
+
+            const eventId = events.value;
             try {
                 await axios.delete('/api/delete-event', { data: { id: eventId } });
                 await fetchEvents();

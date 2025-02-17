@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4d16d89d-5834-4e10-b37c-ca8c51217602" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EventController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EventController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/EventModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Event.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/EventService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/EventService.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/Interfaces/IEventService.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/Interfaces/IEventService.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Transformers/EventListTransformer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Transformers/EventListTransformer.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/js/components/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/index.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

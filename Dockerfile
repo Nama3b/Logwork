@@ -2,6 +2,9 @@ FROM richarvey/nginx-php-fpm:3.1.6
 
 COPY . .
 
+# Cấp quyền thực thi cho script deploy
+RUN chmod +x scripts/00-laravel-deploy.sh
+
 # Image config
 ENV SKIP_COMPOSER 1
 ENV WEBROOT /var/www/html/public
@@ -18,4 +21,3 @@ ENV LOG_CHANNEL stderr
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
 CMD ["./scripts/00-laravel-deploy.sh"]
-

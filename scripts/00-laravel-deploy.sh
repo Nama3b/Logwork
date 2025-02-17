@@ -2,7 +2,7 @@ set -o errexit
 
 #!/usr/bin/env bash
 echo "Running composer"
-composer install --ignore-platform-reqs
+composer install --no-dev --optimize-autoloader
 
 npm install
 npm run dev

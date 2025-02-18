@@ -196,7 +196,7 @@ button.delete-btn:hover {
         <div class="calendar">
             <div v-for="day in daysInMonth" :key="day.date" class="day" @click="openPopup(day.date)">
                 {{ day.date }} <i>({{ day.weekday }})</i>
-                <div v-for="(event, time) in events[day.date]" :key="time" :class="['event', time.toLowerCase()]">
+                <div v-for="(event, time) in events[day.date]" :key="time" :class="['event', time.toLowerCase()]" @click.stop="openPopup(day.date, event.id)">
                     {{ time }}: {{ event.detail }}
                     <button class="delete-btn" @click.stop="deleteEvent(event.id)">&times;</button>
                 </div>
@@ -267,12 +267,14 @@ export default {
             }
         };
 
-        const openPopup = (day) => {
+        const openPopup = (day, id) => {
+            console.log("xxxxxx",id);
             const today = new Date().getDate();
             if (day < today) {
                 alert("Bạn không thể thêm sự kiện cho ngày đã qua.");
                 return;
             }
+            selectedEventId.value = id;
             selectedDay.value = day;
             selectedTimeSlot.value = null;
             eventDetail.value = '';

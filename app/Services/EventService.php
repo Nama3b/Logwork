@@ -39,7 +39,7 @@ class EventService implements IEventService
                 'detail' => $request->detail
             ];
 
-            $query->upsert($data, 'id');
+            $query->upsert($data, ['day', 'month', 'year'], 'detail');
         }
 
         return $query;

@@ -1,11 +1,11 @@
 set -o errexit
 
 #!/usr/bin/env bash
-echo "Running composer"
-composer install --no-dev --working-dir=/var/www/html
-
-echo "generating application key..."
-php artisan key:generate --show
+# echo "Running composer"
+# composer install --ignore-platform-reqs --working-dir=/var/www/html
+#
+# echo "generating application key..."
+# php artisan key:generate --show
 
 npm install
 npm run dev

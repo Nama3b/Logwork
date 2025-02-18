@@ -8,8 +8,7 @@ set -o errexit
 # php artisan key:generate --show
 
 echo "Installing Node.js..."
-curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-apt-get install -y nodejs
+apk add --no-cache nodejs npm
 
 npm install
 npm run dev
@@ -25,3 +24,4 @@ php artisan migrate --force
 
 echo "Publishing cloudinary provider..."
 php artisan vendor:publish --provider="CloudinaryLabs\CloudinaryLaravel\CloudinaryServiceProvider" --tag="cloudinary-laravel-config"
+

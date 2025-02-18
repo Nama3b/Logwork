@@ -2,6 +2,7 @@ set -o errexit
 
 #!/usr/bin/env bash
 echo "Running composer"
+composer clear-cache
 composer install --no-dev --optimize-autoloader
 
 npm install

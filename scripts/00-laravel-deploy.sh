@@ -3,7 +3,7 @@ set -o errexit
 #!/usr/bin/env bash
 echo "Running composer"
 composer clear-cache
-composer install --no-dev --optimize-autoloader --prefer-source
+composer install --no-dev --optimize-autoloader
 
 npm install
 npm run dev

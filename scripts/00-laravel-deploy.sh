@@ -7,6 +7,10 @@ set -o errexit
 # echo "generating application key..."
 # php artisan key:generate --show
 
+echo "Installing Node.js..."
+curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+apt-get install -y nodejs
+
 npm install
 npm run dev
 

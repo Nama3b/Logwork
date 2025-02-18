@@ -4,6 +4,7 @@ COPY . .
 
 # Cấp quyền thực thi cho script deploy
 RUN chmod +x scripts/00-laravel-deploy.sh
+RUN apt-get update && apt-get install -y nodejs npm
 
 # Image config
 ENV SKIP_COMPOSER 1

@@ -11,7 +11,7 @@ echo "Installing Node.js..."
 apk add --no-cache nodejs npm
 
 npm install
-npm run dev
+npm run build
 
 echo "Caching config..."
 php artisan config:cache

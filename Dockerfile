@@ -21,3 +21,5 @@ ENV LOG_CHANNEL stderr
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
 CMD ["./scripts/00-laravel-deploy.sh"]
+
+CMD php artisan serve --host 0.0.0.0 --port $PORT

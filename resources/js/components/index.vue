@@ -4,38 +4,54 @@
     text-align: center;
     margin: 0;
     padding: 0;
+    background-color: #f4f4f9;
 }
 
 h1 {
     text-transform: uppercase;
+    font-size: 24px;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #333;
 }
 
 .calendar {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 5px;
-    max-width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    max-width: 90%;
     margin: 20px auto;
     padding: 10px;
 }
 
 .day {
-    border: 1px solid #ccc;
-    padding: 10px 5px;
-    min-height: 60px;
+    border: 1px solid #ddd;
+    padding: 15px 6px;
+    min-height: 70px;
     cursor: pointer;
     position: relative;
-    background: #f9f9f9;
-    border-radius: 5px;
-    font-size: 14px;
+    background: white;
+    border-radius: 8px;
+    font-size: 12px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.day:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.day i {
+    font-size: 10px;
 }
 
 .event {
     color: white;
-    padding: 3px;
-    margin-top: 3px;
+    padding: 4px 0;
+    margin-top: 5px;
     border-radius: 3px;
     font-size: 12px;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .popup {
@@ -43,12 +59,24 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #c4c4c4;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     width: 90%;
     max-width: 400px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -55%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 .popup button {
@@ -58,10 +86,15 @@ h1 {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+    transition: background 0.2s;
+}
+
+.popup button:hover {
+    background: #ddd;
 }
 
 .popup input {
-    width: calc(100% - 17px);
+    width: calc(100% - 20px);
     padding: 8px;
     margin: 10px 0;
     border: 1px solid #ccc;
@@ -74,6 +107,11 @@ h1 {
     padding: 10px;
     margin: 5px;
     cursor: pointer;
+    transition: background 0.2s;
+}
+
+.time-btn:hover {
+    background: #ddd;
 }
 
 .selected {
@@ -101,17 +139,23 @@ button.delete-btn {
     position: absolute;
     background: #7a7a7a;
     border: none;
-    font-size: 10px;
-    padding: 1px 3px;
+    font-size: 12px;
+    padding: 2px 5px;
     right: -7px;
     top: -3px;
     border-radius: 50%;
     color: white;
     cursor: pointer;
+    transition: background 0.2s;
+}
+
+button.delete-btn:hover {
+    background: #555;
 }
 
 .btn-action {
     display: flex;
+    justify-content: space-between;
 }
 
 .btn-action button {
@@ -120,22 +164,39 @@ button.delete-btn {
 
 .save-btn {
     border: none;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.save-btn:hover {
+    background-color: #45a049;
 }
 
 .cancel-btn {
     border: 1px solid white;
     background: #c4c4c4;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
+.cancel-btn:hover {
+    background: #bbb;
+}
 </style>
 
 <template>
     <div class="body">
         <h1>{{ new Date().toLocaleString('vi-VN', { day: 'numeric', month: 'long'}) }}</h1>
         <div class="calendar">
-            <div v-for="day in daysInMonth" :key="day" class="day" @click="openPopup(day)">
-                {{ day }}
-                <div v-for="(event, time) in events[day]" :key="time" :class="['event', time.toLowerCase()]">
+            <div v-for="day in daysInMonth" :key="day.date" class="day" @click="openPopup(day.date)">
+                {{ day.date }} <i>({{ day.weekday }})</i>
+                <div v-for="(event, time) in events[day.date]" :key="time" :class="['event', time.toLowerCase()]">
                     {{ time }}: {{ event.detail }}
                     <button class="delete-btn" @click.stop="deleteEvent(event.id)">&times;</button>
                 </div>
@@ -172,13 +233,21 @@ export default {
         const showPopup = ref(false);
 
         const timeSlots = ["Sáng", "Chiều", "Tối"];
-        const timeOrder = { "Sáng": 1, "Chiều": 2, "Tối": 3 };
+        const weekdays = ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"];
 
         const getDaysInMonth = () => {
             const date = new Date();
             const month = date.getMonth();
             const year = date.getFullYear();
-            return new Array(new Date(year, month + 1, 0).getDate()).fill().map((_, i) => i + 1);
+            const days = [];
+            for (let i = 1; i <= new Date(year, month + 1, 0).getDate(); i++) {
+                const dayDate = new Date(year, month, i);
+                days.push({
+                    date: i,
+                    weekday: weekdays[dayDate.getDay()]
+                });
+            }
+            return days;
         };
 
         const fetchEvents = async () => {
@@ -198,16 +267,15 @@ export default {
             }
         };
 
-        const openPopup = (day, time = null) => {
+        const openPopup = (day) => {
             const today = new Date().getDate();
             if (day < today) {
                 alert("Bạn không thể thêm sự kiện cho ngày đã qua.");
                 return;
             }
             selectedDay.value = day;
-            selectedTimeSlot.value = time;
-            eventDetail.value = time && events.value[day]?.[time]?.detail || '';
-            selectedEventId.value = time && events.value[day]?.[time]?.id || null;
+            selectedTimeSlot.value = null;
+            eventDetail.value = '';
             showPopup.value = true;
         };
 
@@ -235,11 +303,10 @@ export default {
             }
         };
 
-        const deleteEvent = async () => {
+        const deleteEvent = async (eventId) => {
             const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?");
             if (!confirmDelete) return;
 
-            const eventId = events.value;
             try {
                 await axios.delete('/api/delete-event', { data: { id: eventId } });
                 await fetchEvents();
@@ -265,8 +332,7 @@ export default {
             openPopup,
             selectTime,
             saveEvent,
-            deleteEvent,
-            timeOrder
+            deleteEvent
         };
     }
 };
